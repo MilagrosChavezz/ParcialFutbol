@@ -5,41 +5,112 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class EquipoDeFutbol {
 
+	private String nombre;
+	private Set<Jugador> jugadores;
+	private static final Integer CAPACIDAD_MAXIMA_EQUIPO = 23;
+
+	public EquipoDeFutbol(String nombre) {
+		super();
+		this.nombre = nombre;
+		this.jugadores = new HashSet<>();
+	}
+
 	/*
-	 * La capacidad máxima de un equipo es 23. Cualquier intento de agregar más
-	 * jugadores generará una excepción (CapacidadMaximaException). Además, no
-	 * deberá permitir duplicar Jugadores (JugadorDuplicadoException).
+	 * La capacidad mï¿½xima de un equipo es 23. Cualquier intento de agregar mï¿½s
+	 * jugadores generarï¿½ una excepciï¿½n (CapacidadMaximaException). Ademï¿½s, no
+	 * deberï¿½ permitir duplicar Jugadores (JugadorDuplicadoException).
 	 */
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public Set<Jugador> getJugadores() {
+		return jugadores;
+	}
+
+	public void setJugadores(Set<Jugador> jugadores) {
+		this.jugadores = jugadores;
+	}
+
+	public static Integer getCapacidadMaximaEquipo() {
+		return CAPACIDAD_MAXIMA_EQUIPO;
+	}
+
+	public Boolean noExcedeCantidadMaxima() throws CapacidadMaximaException {
+		if (CAPACIDAD_MAXIMA_EQUIPO > jugadores.size()) {
+			return true;
+		}
+		throw new CapacidadMaximaException();
+	}
+
+	public Boolean seAgregaJugador(Jugador jugador) throws JugadorDuplicadoException {
+		if (jugadores.add(jugador)) {
+			return true;
+		}
+		throw new JugadorDuplicadoException();
+	}
+
 	public void agregarJugador(Jugador jugador) throws CapacidadMaximaException, JugadorDuplicadoException {
+
+		if (noExcedeCantidadMaxima()) {
+			seAgregaJugador(jugador);
+		}
+		;
 
 	}
 
 	/*
 	 * Permite cambiar cualquier jugador. Un intento de cambiar un jugador no
-	 * presente en el equipo generará una excepción
-	 * (JugadoreInexistenteException).
+	 * presente en el equipo generarï¿½ una excepciï¿½n (JugadoreInexistenteException).
 	 */
-	public Boolean cambiarJugador(Jugador saliente, Jugador entrante) throws JugadoreInexistenteException{
-		
+
+	public Boolean jugadorExistente(Jugador saliente) throws JugadoreInexistenteException {
+		if (jugadores.contains(saliente)) {
+			return true;
+		}
+		throw new JugadoreInexistenteException();
+	}
+
+	public Boolean cambiarJugador(Jugador saliente, Jugador entrante) throws JugadoreInexistenteException {
+
+		if (jugadorExistente(saliente) && jugadorExistente(entrante)) {
+			return true;
+		}
 		return false;
 	}
 
 	public TreeSet<Jugador> devolverPlanteOrdenadoPorNombreDeJugador() {
-		
-		return null;
+
+		TreeSet<Jugador> plantelOrdenadoPorNombre = new TreeSet<>(new ordenamientoPorNombre());
+
+		plantelOrdenadoPorNombre.addAll(jugadores);
+		return plantelOrdenadoPorNombre;
 	}
 
 	public TreeSet<Jugador> devolverPlanteOrdenadoPorPrecioDeCompraDeJugador() {
-		return null;
+		TreeSet<Jugador> plantelOrdenadoPorPrecioDeCompra = new TreeSet<>(new ordenamientoPorCompra());
+
+		plantelOrdenadoPorPrecioDeCompra.addAll(jugadores);
+		return plantelOrdenadoPorPrecioDeCompra;
 	}
 
 	public TreeSet<Jugador> devolverPlanteOrdenadoPorNumeroDeCamisetaDeJugador() {
-		return null;
+		TreeSet<Jugador> plantelOrdenadoPorNroCamiseta = new TreeSet<>(new ordenamientoPorNroCamiseta());
+
+		plantelOrdenadoPorNroCamiseta.addAll(jugadores);
+		
+		return plantelOrdenadoPorNroCamiseta;
 	}
 
 }
